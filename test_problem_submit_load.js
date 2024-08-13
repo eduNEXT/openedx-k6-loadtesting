@@ -1,7 +1,6 @@
 /*
   Name: Problem submit tests.
   Test type: Load test
-  Maintained by: Jhony Avella
   Description: used to generate performance indicators when submitting a multiple choice problem in a course.
 */
 import exec from "k6/execution";
@@ -17,8 +16,6 @@ const PROBLEM_ID = PROFILE["problem_id"];
 const FULL_PROBLEM_ID = `block-v1:${COURSE_ID.replace('course-v1:', '')}+type@problem+block@${PROBLEM_ID}`;
 const XMODULE_HANDLER = `/courses/${COURSE_ID}/xblock/${FULL_PROBLEM_ID}/handler/xmodule_handler/problem_check`;
 const PROBLEM_SUBMISSION_BODY = `input_${PROBLEM_ID}_2_1=choice_0`;
-const XMODULE_RESET_HANDLER = `/courses/${COURSE_ID}/xblock/${FULL_PROBLEM_ID}/handler/xmodule_handler/problem_reset`;
-const PROBLEM_SUBMISSION_RESET_BODY = `id=${FULL_PROBLEM_ID}`;
 const RUN_SETUP = PROFILE["run_setup"] || false;
 
 const client = new Client(PROFILE);

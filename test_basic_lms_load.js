@@ -1,17 +1,7 @@
 /*
   Name: Basic LMS load test
   Test type: Load test
-  Maintained by: Atlas Team
   Description: This load test uses the K6 http features to execute a basic sequence for multiple users.
-    The test requires the definition of an environment variable called "PROFILE" in order to define a
-    set of test variables like the LMS url or the course ID used to hit the platform. The list of available
-    profiles is contained in the folder ./profiles as JSON files. To run the test against a profile, just
-    run the test indicating the profile name (with no extension) as follows:
-
-      $ k6 run <test_file_name>.js -e PROFILE=<profile_name>
-
-    A users.json helper file is used to load real users from the OpenedX platform to perform the test. Every
-    user maps to a K6 VU.
 
     The flow executed by every VU in the test is described below:
     - If the VU (or user) is running its first iteration, try to log the user in.

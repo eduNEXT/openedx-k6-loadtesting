@@ -1,8 +1,13 @@
 # OpenedX Load Tests with K6
 
+This repository provides a set of load tests powered by K6 to meassure
+the performance of Open edX installations.
+
 [K6](https://k6.io/) is a widely used tool to perform load testing. It
 is open-source, relies on a large [community](https://community.k6.io/),
 and it's backed by Grafana labs.
+
+For detailed information of the tests check their inline documentation.
 
 ## Pre-requisites
 
@@ -45,7 +50,7 @@ the web dashboard to see the results in a more visual way.
 
 Make sure to check the [K6 documentation](https://k6.io/docs/get-started/results-output/)
 and the [Results output section](https://grafana.com/docs/k6/latest/results-output/)
-to learn more about the results and how to interpret them and
+to learn more about the results and how to interpret them.
 
 ## Developing
 
@@ -77,9 +82,9 @@ $ make lint
 Feel free to explore the K6 [documentation](https://k6.io/docs/) to get
 further information and learn more about advanced features.
 
-TODO:
+### Future work
 
 - Implement a strategy to run the tests in a more automated way, using
   remote instances.
 - Define a template for test descriptions.
-- Make tests more flexible and configurable.
+

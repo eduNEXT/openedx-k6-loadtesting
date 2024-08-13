@@ -1,7 +1,6 @@
 /*
   Name: Basic LMS load test
   Test type: Load test
-  Maintained by: Atlas Team
   Description: This load test uses the K6 browser features to execute a basic sequence for multiple users.
     The sequence is described below:
     - K6 Opens a new page in chromium
@@ -13,9 +12,7 @@
     - Once in the course, the user goes directly to a specific unit of the course
     - Once the unit is loaded, K6 closes the web page (session is lost)
   Notes:
-    - This test assumes that users extracted from users.json file already exist and are enrolled to a specific course
-    - Browser features are still experimental, so we might experience errors in future versions of K6. This test was built using K6 0.46.0
-    - This test requires more iterations to be more configurable
+    - Browser features are still experimental, so we might experience errors in future versions of K6.
 */
 
 /*

@@ -1,3 +1,18 @@
+/*
+  Name: Request static files
+  Test type: Load test
+  Description: This load is used to meassure the performance of loading a set of static files.
+
+    You need to provide a set of static files and their path on your profile file. e.g:
+    {
+      "lms_root_url": "www.myinstance.org",
+      "static_path": "/static"
+      "static_files": [
+        "js/i18n/en/djangojs.0f66acafc573.js",
+        "css/lms-style-vendor.68e48093f5dd.css"
+      ]
+    }
+*/
 import { sleep, group } from "k6";
 import { textSummary } from "https://jslib.k6.io/k6-summary/0.0.2/index.js";
 import http from "k6/http";
@@ -9,15 +24,15 @@ export const options = {
 };
 
 const PROFILE = get_profile();
-const MFE_HOST = PROFILE["mfe_host"];
-const MFE_PATH = PROFILE["mfe_path"];
+const LMS_ROOT_URL = PROFILE["lms_root_url"];
+const STATIC_PATH = PROFILE["static_path"];
 
 const STATIC_FILES = PROFILE["static_files"];
 
 export default function main() {
   let response;
   const headers = {
-    host: `${MFE_HOST}`,
+    host: `${LMS_ROOT_URL}`,
     "user-agent":
       "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/114.0",
     accept:
@@ -36,7 +51,7 @@ export default function main() {
   group("MFE static files", function () {
     for (var i = 0; i < STATIC_FILES.length; i++) {
       response = http.get(
-        `https://${MFE_HOST}/${MFE_PATH}/${STATIC_FILES[i]}`,
+        `https://${LMS_ROOT_URL}${STATIC_PATH}/${STATIC_FILES[i]}`,
         {
           headers: headers,
         },
