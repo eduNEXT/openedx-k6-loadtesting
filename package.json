@@ -1,0 +1,17 @@
+{
+  "name": "k6-loadtesting",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "lint:format": "eslint --fix",
+    "lint:check": "eslint"
+  },
+  "keywords": [],
+  "author": "edunext",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/k6": "^0.50.1",
+    "eslint": "9.1.1"
+  }
+}
