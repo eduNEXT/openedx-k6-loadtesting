@@ -1,7 +1,17 @@
 /*
   Name: Basic LMS load test
   Test type: Load test
+  Maintained by: Atlas Team
   Description: This load test uses the K6 http features to execute a basic sequence for multiple users.
+    The test requires the definition of an environment variable called "PROFILE" in order to define a
+    set of test variables like the LMS url or the course ID used to hit the platform. The list of available
+    profiles is contained in the folder ./profiles as JSON files. To run the test against a profile, just
+    run the test indicating the profile name (with no extension) as follows:
+
+      $ k6 run <test_file_name>.js -e PROFILE=<profile_name>
+
+    A users.json helper file is used to load real users from the OpenedX platform to perform the test. Every
+    user maps to a K6 VU.
 
     The flow executed by every VU in the test is described below:
     - If the VU (or user) is running its first iteration, try to log the user in.
@@ -18,6 +28,7 @@
 
 import exec from "k6/execution";
 import http from "k6/http";
+import { sleep } from "k6";
 import { get_profile, createUser, loginUser } from "./utils.js";
 
 const PROFILE = get_profile();
@@ -73,23 +84,28 @@ export default function (data) {
   if (exec.vu.iterationInScenario == 0) {
     loginUser(exec.vu.idInTest - 1, LMS_ROOT_URL, LMS_LOGIN_SESSION_PATH);
   }
-  const lmsRes = http.get(`${LMS_ROOT_URL}/`);
+  let url = `${LMS_ROOT_URL}/`;
+  const lmsRes = http.get(url);
   console.debug(`[${lmsRes.status}] ${url}`);
   sleep(SLEEP_TIME);
   // Visit the course catalog page
-  const coursesRes = http.get(LMS_ROOT_URL+LMS_COURSES_PATH);
+  url = LMS_ROOT_URL+LMS_COURSES_PATH;
+  const coursesRes = http.get(url);
   console.debug(`[${coursesRes.status}] ${url}`);
   sleep(SLEEP_TIME);
   // Visit the account settings page
-  const accountSettingsRes = http.get(LMS_ROOT_URL + LMS_ACCOUNT_SETTINGS_PATH);
+  url = LMS_ROOT_URL + LMS_ACCOUNT_SETTINGS_PATH;
+  const accountSettingsRes = http.get(url);
   console.debug(`[${accountSettingsRes.status}] ${url}`);
   sleep(SLEEP_TIME);
   // Visiting a specific course home
-  const courseHomeRes = http.get(MFE_ROOT_URL + LMS_COURSE_HOME_PATH);
+  url = MFE_ROOT_URL + LMS_COURSE_HOME_PATH;
+  const courseHomeRes = http.get(url);
   console.debug(`[${courseHomeRes.status}] ${url}`);
   sleep(SLEEP_TIME);
   // Visiting a specific unit of a specific course
-  const courseUnitRes = http.get(LMS_ROOT_URL + LMS_COURSE_UNIT_PATH);
+  url = LMS_ROOT_URL + LMS_COURSE_UNIT_PATH;
+  const courseUnitRes = http.get(url);
   console.debug(`[${courseUnitRes.status}] ${url}`);
   sleep(SLEEP_TIME);
 }

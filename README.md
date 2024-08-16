@@ -43,6 +43,46 @@ The `K6_WEB_DASHBOARD` environment variable is used to enable the web
 dashboard. You can access it by opening the URL shown in the terminal
 after running the tests.
 
+
+### Basic browser test
+
+This test emulates a browser and perform actions such as login, visiting the dashboard
+and loading a course unit.
+
+You can customize the unit it visits by changing the ID in the profile. e.g:
+
+```json
+{
+  "basic_browser_test_unit": "/block-v1:edX+DemoX+Demo_Course+type@sequential+block@basic_questions/block-v1:edX+DemoX+Demo_Course+type@vertical+block@54bb9b142c6c4c22afc62bcb628f0e68"
+}
+```
+
+To get the unit ID you can go to the unit in the LMS and copy the string from the URL
+after that starts with `/block-v1`
+
+### Problem submit load
+
+This test perfom calls to the problem handler API which allows to tests
+celery performance and real users.
+
+You can customize the problem it answers by changing the ID in the profile. e.g:
+
+```json
+{
+  "problem_id": "870b16e640d541af94a308caac834d2e"
+}
+```
+
+To update the problem id to to the course unit in the LMS where the problem is located, then
+click `STAFF DEBUG INFO` button and copy the alphanumeric character after the `@` symbol in
+the location: e.g:
+
+```
+location = block-v1:OpenedX+DemoX+DemoCourse+type@problem+block@870b16e640d541af94a308caac834d2e
+
+problem_id = 870b16e640d541af94a308caac834d2e
+```
+
 ## Results
 
 The results of the tests are shown in the terminal. You can also access

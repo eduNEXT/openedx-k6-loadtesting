@@ -12,7 +12,8 @@
   "lms_account_setting_path": "/account/settings",
   "lms_courses_path": "/courses",
   "lms_course_home_path": "/learning/course/",
-  "static_path": "/static",
+  "mfe_host": "http://apps.local.edly.io",
+  "mfe_path": "learning",
   "static_files": [],
   "logging": true
 }
