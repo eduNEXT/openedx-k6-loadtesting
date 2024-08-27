@@ -43,6 +43,8 @@ The `K6_WEB_DASHBOARD` environment variable is used to enable the web
 dashboard. You can access it by opening the URL shown in the terminal
 after running the tests.
 
+For compatiblity with pre-redwood Open edX releases there is a profile
+file `palm.json` which can be used as a base for your custom profile.
 
 ### Basic browser test
 
