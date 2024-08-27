@@ -5,6 +5,7 @@
   Description: used to generate performance indicators when submitting a multiple choice problem in a course.
 */
 import exec from "k6/execution";
+import { sleep } from "k6";
 import http from "k6/http";
 import { get_profile, createUser, loginUser } from "./utils.js";
 
@@ -17,11 +18,8 @@ const PROBLEM_ID = PROFILE["problem_id"];
 const FULL_PROBLEM_ID = `block-v1:${COURSE_ID.replace('course-v1:', '')}+type@problem+block@${PROBLEM_ID}`;
 const XMODULE_HANDLER = `/courses/${COURSE_ID}/xblock/${FULL_PROBLEM_ID}/handler/xmodule_handler/problem_check`;
 const PROBLEM_SUBMISSION_BODY = `input_${PROBLEM_ID}_2_1=choice_0`;
-const XMODULE_RESET_HANDLER = `/courses/${COURSE_ID}/xblock/${FULL_PROBLEM_ID}/handler/xmodule_handler/problem_reset`;
-const PROBLEM_SUBMISSION_RESET_BODY = `id=${FULL_PROBLEM_ID}`;
 const RUN_SETUP = PROFILE["run_setup"] || false;
-
-const client = new Client(PROFILE);
+const SLEEP_TIME = PROFILE["sleep_time"];
 
 export const options = {
   // This "stages" definition allows to increase the number of VU's gradually through the test.
@@ -62,7 +60,8 @@ export default function (data) {
     loginUser(exec.vu.idInTest - 1, LMS_ROOT_URL, LMS_LOGIN_SESSION_PATH);
   }
   // Visiting a specific unit of a specific course
-  const lmsRes = http.get(LMS_ROOT_URL);
+  let url = LMS_ROOT_URL;
+  const lmsRes = http.get(url);
   console.debug(`[${lmsRes.status}] ${url}`);
   sleep(SLEEP_TIME);
   // Submit multiple choice problem
@@ -73,7 +72,8 @@ export default function (data) {
     Accept: "application/json, text/javascript, */*; q=0.01",
     "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
   };
-  const submitUnitResponse = http.post(LMS_ROOT_URL + XMODULE_HANDLER, PROBLEM_SUBMISSION_BODY, { headers: headers });
+  url = LMS_ROOT_URL + XMODULE_HANDLER;
+  const submitUnitResponse = http.post(url, PROBLEM_SUBMISSION_BODY, { headers: headers });
   console.debug(`[${submitUnitResponse.status}] ${url}`);
   sleep(SLEEP_TIME);
 }

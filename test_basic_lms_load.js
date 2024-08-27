@@ -28,6 +28,7 @@
 
 import exec from "k6/execution";
 import http from "k6/http";
+import { sleep } from "k6";
 import { get_profile, createUser, loginUser } from "./utils.js";
 
 const PROFILE = get_profile();
@@ -83,23 +84,28 @@ export default function (data) {
   if (exec.vu.iterationInScenario == 0) {
     loginUser(exec.vu.idInTest - 1, LMS_ROOT_URL, LMS_LOGIN_SESSION_PATH);
   }
-  const lmsRes = http.get(`${LMS_ROOT_URL}/`);
+  let url = `${LMS_ROOT_URL}/`;
+  const lmsRes = http.get(url);
   console.debug(`[${lmsRes.status}] ${url}`);
   sleep(SLEEP_TIME);
   // Visit the course catalog page
-  const coursesRes = http.get(LMS_ROOT_URL+LMS_COURSES_PATH);
+  url = LMS_ROOT_URL+LMS_COURSES_PATH;
+  const coursesRes = http.get(url);
   console.debug(`[${coursesRes.status}] ${url}`);
   sleep(SLEEP_TIME);
   // Visit the account settings page
-  const accountSettingsRes = http.get(LMS_ROOT_URL + LMS_ACCOUNT_SETTINGS_PATH);
+  url = LMS_ROOT_URL + LMS_ACCOUNT_SETTINGS_PATH;
+  const accountSettingsRes = http.get(url);
   console.debug(`[${accountSettingsRes.status}] ${url}`);
   sleep(SLEEP_TIME);
   // Visiting a specific course home
-  const courseHomeRes = http.get(MFE_ROOT_URL + LMS_COURSE_HOME_PATH);
+  url = MFE_ROOT_URL + LMS_COURSE_HOME_PATH;
+  const courseHomeRes = http.get(url);
   console.debug(`[${courseHomeRes.status}] ${url}`);
   sleep(SLEEP_TIME);
   // Visiting a specific unit of a specific course
-  const courseUnitRes = http.get(LMS_ROOT_URL + LMS_COURSE_UNIT_PATH);
+  url = LMS_ROOT_URL + LMS_COURSE_UNIT_PATH;
+  const courseUnitRes = http.get(url);
   console.debug(`[${courseUnitRes.status}] ${url}`);
   sleep(SLEEP_TIME);
 }
