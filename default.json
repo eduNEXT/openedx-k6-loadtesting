@@ -1,6 +1,6 @@
 {
-  "lms_root_url": "http://local.edly.io",
-  "learning_mfe_root_url": "https://apps.local.edly.io",
+  "lms_root_url": "https://titanic.atlas.edunext.link/",
+  "learning_mfe_root_url": "https://apps.titanic.atlas.edunext.link",
   "course_id": "course-v1:OpenedX+DemoX+DemoCourse",
   "run_setup": true,
   "sleep_time": 4,
@@ -12,7 +12,7 @@
   "lms_account_setting_path": "/account/settings",
   "lms_courses_path": "/courses",
   "lms_course_home_path": "/learning/course/",
-  "mfe_host": "http://apps.local.edly.io",
+  "mfe_host": "https://apps.titanic.atlas.edunext.link",
   "mfe_path": "learning",
   "static_files": []
 }
