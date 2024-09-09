@@ -78,10 +78,6 @@ export function setup() {
   3. VU CODE
 */
 export default function (data) {
-
-  if (exec.vu.idInTest - 1 >= 1 && exec.vu.idInTest - 1 < 50) {
-    return;
-  }
   // Execute login and enrollment processes only if it's the first iteration of a virtual user.
   // Thanks to the setting "noCookiesReset" cookies are kept across all the iterations
   if (exec.vu.iterationInScenario == 0) {

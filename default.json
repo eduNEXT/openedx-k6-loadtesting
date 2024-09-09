@@ -4,7 +4,7 @@
   "course_id": "course-v1:OpenedX+DemoX+DemoCourse",
   "run_setup": false,
   "sleep_time": 4,
-  "stages": [{ "target": 400, "duration": "1m" },{ "target": 400, "duration": "3m" }],
+  "stages": [{ "target": 100, "duration": "1m" },{ "target": 100, "duration": "3m" }],
   "basic_browser_test_unit": "/block-v1:edX+DemoX+Demo_Course+type@sequential+block@basic_questions/block-v1:edX+DemoX+Demo_Course+type@vertical+block@54bb9b142c6c4c22afc62bcb628f0e68",
   "course_unit": "/xblock/block-v1:OpenedX+DemoX+DemoCourse+type@vertical+block@78b75020d3894fdfa8b4994f97275294",
   "problem_id": "870b16e640d541af94a308caac834d2e",
