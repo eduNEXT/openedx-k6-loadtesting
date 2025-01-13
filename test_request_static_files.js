@@ -1,7 +1,7 @@
 import { sleep, group } from "k6";
 import { textSummary } from "https://jslib.k6.io/k6-summary/0.0.2/index.js";
 import http from "k6/http";
-import { get_profile } from "./utils";
+import { get_profile } from "./utils.js";
 
 export const options = {
   vus: 100,
