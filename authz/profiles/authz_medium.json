@@ -1,0 +1,17 @@
+{
+  "stages": [
+    { "target": 10, "duration": "2m" },
+    { "target": 10, "duration": "3m" },
+    { "target": 20, "duration": "2m" },
+    { "target": 20, "duration": "3m" },
+    { "target": 30, "duration": "2m" },
+    { "target": 30, "duration": "3m" },
+    { "target": 0, "duration": "1m" }
+  ],
+  "authz_permissions_per_request": 15,
+  "authz_username": "admin",
+  "authz_password": "admin",
+  "sleep_time": 1,
+  "run_setup": false,
+  "lms_root_url": "https://singapore.edunext.cloud"
+}

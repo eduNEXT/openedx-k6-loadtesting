@@ -7,13 +7,9 @@
     { "target": 0, "duration": "1m" }
   ],
   "authz_permissions_per_request": 10,
-  "authz_test_scopes": [
-    "lib:Openedx:CSPROB",
-    "lib:MIT:LIB1"
-  ],
   "authz_username": "admin",
   "authz_password": "admin",
   "sleep_time": 1,
-  "run_setup": true,
+  "run_setup": false,
   "lms_root_url": "https://singapore.edunext.cloud"
 }

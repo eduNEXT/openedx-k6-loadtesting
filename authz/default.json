@@ -1,0 +1,22 @@
+{
+  "lms_root_url": "http://local.edly.io",
+  "authz_username": "admin",
+  "authz_password": "admin",
+  "authz_client_id": "login-service-client-id",
+  "authz_permissions_per_request": 10,
+  "authz_test_scopes": [
+    "lib:OpenedX:CSPROB",
+    "lib:OpenedX:CE",
+    "lib:MIT:LIB1",
+    "lib:OpenedX:DMS",
+    "lib:OpenedX:LANGP",
+    "lib:OpenedX:OPTI"
+  ],
+  "run_setup": true,
+  "sleep_time": 1,
+  "stages": [
+    { "target": 10, "duration": "2m" },
+    { "target": 10, "duration": "3m" },
+    { "target": 0, "duration": "2m" }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "stages": [
+    { "target": 10, "duration": "2m" },
+    { "target": 10, "duration": "3m" },
+    { "target": 25, "duration": "2m" },
+    { "target": 25, "duration": "3m" },
+    { "target": 50, "duration": "2m" },
+    { "target": 50, "duration": "4m" },
+    { "target": 75, "duration": "2m" },
+    { "target": 75, "duration": "3m" },
+    { "target": 100, "duration": "2m" },
+    { "target": 100, "duration": "4m" },
+    { "target": 0, "duration": "2m" }
+  ],
+  "authz_permissions_per_request": 5,
+  "authz_username": "admin",
+  "authz_password": "admin",
+  "sleep_time": 1,
+  "run_setup": false,
+  "lms_root_url": "https://singapore.edunext.cloud"
+}

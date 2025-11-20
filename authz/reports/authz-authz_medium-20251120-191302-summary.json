@@ -1,0 +1,370 @@
+{
+  "root_group": {
+    "id": "d41d8cd98f00b204e9800998ecf8427e",
+    "groups": [],
+    "checks": [
+        {
+          "passes": 30,
+          "fails": 0,
+          "name": "Authorization successful",
+          "path": "::Authorization successful",
+          "id": "210e6600e0cfa77ed54c3fa47edfe5ea"
+        },
+        {
+          "fails": 0,
+          "name": "Access token received",
+          "path": "::Access token received",
+          "id": "eaff7881aa9ec97c57f53218fa048747",
+          "passes": 30
+        },
+        {
+          "path": "::Validate permissions successful",
+          "id": "904e42add15a7f06647289d22c002686",
+          "passes": 2390,
+          "fails": 2,
+          "name": "Validate permissions successful"
+        },
+        {
+          "id": "d08624a6db93e25427b329201a30afcb",
+          "passes": 2390,
+          "fails": 2,
+          "name": "Permissions response is array",
+          "path": "::Permissions response is array"
+        },
+        {
+          "fails": 2,
+          "name": "All permissions have allowed field",
+          "path": "::All permissions have allowed field",
+          "id": "6c76f7c2064bc0c3b4df131413e45fa3",
+          "passes": 2390
+        }
+      ],
+    "name": "",
+    "path": ""
+  },
+  "options": {
+    "summaryTrendStats": [
+      "min",
+      "avg",
+      "med",
+      "max",
+      "p(90)",
+      "p(95)",
+      "p(99)",
+      "p(99.9)"
+    ],
+    "summaryTimeUnit": "",
+    "noColor": false
+  },
+  "state": {
+    "isStdOutTTY": false,
+    "isStdErrTTY": false,
+    "testRunDurationMs": 960914.867689
+  },
+  "metrics": {
+    "permission_validation_duration": {
+      "type": "trend",
+      "contains": "default",
+      "values": {
+        "avg": 6094.755852842809,
+        "med": 6241,
+        "max": 16360,
+        "p(90)": 10761.10000000001,
+        "p(95)": 14192.299999999994,
+        "p(99)": 15509.36,
+        "p(99.9)": 16201.533000000014,
+        "min": 534
+      },
+      "thresholds": {
+        "p(95)<2500": {
+          "ok": false
+        },
+        "p(99)<5000": {
+          "ok": false
+        }
+      }
+    },
+    "vus_max": {
+      "type": "gauge",
+      "contains": "default",
+      "values": {
+        "max": 30,
+        "value": 30,
+        "min": 30
+      }
+    },
+    "permission_validation_errors": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "rate": 0,
+        "count": 0
+      },
+      "thresholds": {
+        "count<50": {
+          "ok": true
+        }
+      }
+    },
+    "http_reqs": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 2422,
+        "rate": 2.520514648529593
+      }
+    },
+    "http_req_connecting": {
+      "contains": "time",
+      "values": {
+        "p(95)": 0,
+        "p(99)": 109.03459487999997,
+        "p(99.9)": 221.9214110380002,
+        "min": 0,
+        "avg": 3.189892540049547,
+        "med": 0,
+        "max": 237.64439,
+        "p(90)": 0
+      },
+      "type": "trend"
+    },
+    "checks": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "passes": 7230,
+        "fails": 6,
+        "rate": 0.9991708126036484
+      }
+    },
+    "iteration_duration": {
+      "values": {
+        "p(99)": 16590.44523915,
+        "p(99.9)": 20561.25103460651,
+        "min": 2084.284057,
+        "avg": 7166.201826722602,
+        "med": 7248.9358025,
+        "max": 26953.786549,
+        "p(90)": 12622.869067599999,
+        "p(95)": 15428.688695899998
+      },
+      "type": "trend",
+      "contains": "time"
+    },
+    "http_req_blocked": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "avg": 7.753224250619327,
+        "med": 0.0009345,
+        "max": 1239.714541,
+        "p(90)": 0.001652,
+        "p(95)": 0.0019347999999999993,
+        "p(99)": 260.2989185699999,
+        "p(99.9)": 464.83723182700476,
+        "min": 0.000175
+      }
+    },
+    "http_req_waiting": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "min": 315.641347,
+        "avg": 6061.6081280355,
+        "med": 6235.7874765,
+        "max": 16359.821881,
+        "p(90)": 10631.537208800004,
+        "p(95)": 14157.297166799995,
+        "p(99)": 15498.51270254,
+        "p(99.9)": 16199.737992851007
+      }
+    },
+    "data_received": {
+      "type": "counter",
+      "contains": "data",
+      "values": {
+        "count": 4515184,
+        "rate": 4698.838733611247
+      }
+    },
+    "vus": {
+      "contains": "default",
+      "values": {
+        "value": 1,
+        "min": 1,
+        "max": 30
+      },
+      "type": "gauge"
+    },
+    "iterations": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "rate": 2.4872130511914645,
+        "count": 2390
+      }
+    },
+    "http_req_duration": {
+      "contains": "time",
+      "values": {
+        "p(99)": 15498.823333749999,
+        "p(99.9)": 16200.106643521007,
+        "min": 316.096271,
+        "avg": 6062.132637947154,
+        "med": 6236.2387,
+        "max": 16360.111641,
+        "p(90)": 10632.123703000001,
+        "p(95)": 14157.589284499996
+      },
+      "thresholds": {
+        "p(95)<3000": {
+          "ok": false
+        },
+        "p(99)<5000": {
+          "ok": false
+        }
+      },
+      "type": "trend"
+    },
+    "data_sent": {
+      "type": "counter",
+      "contains": "data",
+      "values": {
+        "count": 3154330,
+        "rate": 3282.6321103618293
+      }
+    },
+    "http_req_tls_handshaking": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "avg": 4.2178028402147,
+        "med": 0,
+        "max": 1133.16027,
+        "p(90)": 0,
+        "p(95)": 0,
+        "p(99)": 119.13828097999999,
+        "p(99.9)": 225.42041431900157,
+        "min": 0
+      }
+    },
+    "http_req_receiving": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "avg": 0.1414952539223784,
+        "med": 0.1228735,
+        "max": 2.705375,
+        "p(90)": 0.2501035,
+        "p(95)": 0.2934346999999999,
+        "p(99)": 0.40241466,
+        "p(99.9)": 1.2161590980001535,
+        "min": 0
+      }
+    },
+    "http_req_failed": {
+      "thresholds": {
+        "rate<0.05": {
+          "ok": true
+        }
+      },
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "fails": 2420,
+        "rate": 0.0008257638315441783,
+        "passes": 2
+      }
+    },
+    "http_req_duration{expected_response:true}": {
+      "contains": "time",
+      "values": {
+        "med": 6236.2387,
+        "max": 16360.111641,
+        "p(90)": 10607.056822999997,
+        "p(95)": 14159.810883049995,
+        "p(99)": 15499.787440249997,
+        "p(99.9)": 16200.182109319005,
+        "min": 316.096271,
+        "avg": 6061.797443409508
+      },
+      "type": "trend"
+    },
+    "http_req_sending": {
+      "values": {
+        "p(99.9)": 0.728582918000005,
+        "min": 0.066499,
+        "avg": 0.3830146577208917,
+        "med": 0.243043,
+        "max": 332.051385,
+        "p(90)": 0.38372690000000004,
+        "p(95)": 0.42854009999999976,
+        "p(99)": 0.5881644499999996
+      },
+      "type": "trend",
+      "contains": "time"
+    }
+  },
+  "setup_data": {
+    "testStartTime": "2025-11-20T18:13:03.079Z",
+    "users": []
+  },
+  "grafanaUrl": "https://vitals.singapore.edunext.cloud/grafana/d/openedxperformance/open-edx-performance?from=2025-11-20T18:08:03.079Z&to=2025-11-20T18:34:03.996Z&var-resolution=3m&refresh=5m",
+  "testInfo": {
+    "testStartTime": "2025-11-20T18:13:03.079Z",
+    "testEndTime": "2025-11-20T18:29:03.996Z",
+    "permissionsPerRequest": 15,
+    "libraryScopesTested": 6,
+    "totalUsers": 0,
+    "roles": [
+      "library_admin",
+      "library_author",
+      "library_user"
+    ]
+  },
+  "profileConfig": {
+    "lms_root_url": "https://singapore.edunext.cloud",
+    "sleep_time": 1,
+    "permissions_per_request": 15,
+    "run_setup": false,
+    "test_scopes": [
+      "lib:OpenedX:CSPROB",
+      "lib:OpenedX:CE",
+      "lib:MIT:LIB1",
+      "lib:OpenedX:DMS",
+      "lib:OpenedX:LANGP",
+      "lib:OpenedX:OPTI"
+    ],
+    "client_id": "login-service-client-id",
+    "stages": [
+      {
+        "target": 10,
+        "duration": "2m"
+      },
+      {
+        "target": 10,
+        "duration": "3m"
+      },
+      {
+        "target": 20,
+        "duration": "2m"
+      },
+      {
+        "target": 20,
+        "duration": "3m"
+      },
+      {
+        "target": 30,
+        "duration": "2m"
+      },
+      {
+        "target": 30,
+        "duration": "3m"
+      },
+      {
+        "target": 0,
+        "duration": "1m"
+      }
+    ]
+  }
+}
