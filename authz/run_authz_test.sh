@@ -1,15 +1,31 @@
 #!/bin/bash
 
 # Run AuthZ Performance Test with Timestamped Reports
-# Usage: ./run_authz_test.sh [profile_name]
-# Example: ./run_authz_test.sh authz_small
+# Usage: ./run_authz_test.sh [profile_name] [test_type]
+# Example: ./run_authz_test.sh authz_small libraries
+#          ./run_authz_test.sh authz_small courses
+# Default test_type: libraries
 
 set -e
 
 # Configuration
 PROFILE="${1:-authz_small}"
+TEST_TYPE="${2:-libraries}"
 REPORTS_DIR="reports"
 TIMEZONE="Europe/Paris"  # UTC+1 (adjust if needed)
+
+# Validate test type
+if [[ "$TEST_TYPE" != "libraries" && "$TEST_TYPE" != "courses" ]]; then
+  echo "Error: Invalid test type '${TEST_TYPE}'. Must be 'libraries' or 'courses'."
+  exit 1
+fi
+
+TEST_FILE="test_${TEST_TYPE}.js"
+
+if [[ ! -f "$TEST_FILE" ]]; then
+  echo "Error: Test file '${TEST_FILE}' not found."
+  exit 1
+fi
 
 # Create reports directory if it doesn't exist
 mkdir -p "$REPORTS_DIR"
@@ -22,14 +38,16 @@ TEST_ID=$(date +%s)
 PROFILE_NAME=$(basename "$PROFILE" .json)
 
 # Report file paths
-JSON_REPORT="${REPORTS_DIR}/authz-${PROFILE_NAME}-${TIMESTAMP}-cet.json"
-SUMMARY_REPORT="${REPORTS_DIR}/authz-${PROFILE_NAME}-${TIMESTAMP}-summary.json"
-LOG_FILE="${REPORTS_DIR}/authz-${PROFILE_NAME}-${TIMESTAMP}.log"
+JSON_REPORT="${REPORTS_DIR}/authz-${TEST_TYPE}-${PROFILE_NAME}-${TIMESTAMP}-cet.json"
+SUMMARY_REPORT="${REPORTS_DIR}/authz-${TEST_TYPE}-${PROFILE_NAME}-${TIMESTAMP}-summary.json"
+LOG_FILE="${REPORTS_DIR}/authz-${TEST_TYPE}-${PROFILE_NAME}-${TIMESTAMP}.log"
 
 # Display test information
 echo "========================================================================"
 echo "AuthZ Performance Test"
 echo "========================================================================"
+echo "Test type:     ${TEST_TYPE}"
+echo "Test file:     ${TEST_FILE}"
 echo "Profile:       profiles/${PROFILE_NAME}.json"
 echo "Timestamp:     ${TIMESTAMP} (UTC+1)"
 echo "Test ID:       ${TEST_ID}"
@@ -41,12 +59,13 @@ echo ""
 
 # Run k6 test with timestamped reports
 # Capture both stdout and stderr to log file while still displaying to console
-k6 run test_authz.js \
+k6 run "${TEST_FILE}" \
   -e PROFILE="$(pwd)/profiles/${PROFILE_NAME}.json" \
   -e SUMMARY_EXPORT="${SUMMARY_REPORT}" \
   --out json="${JSON_REPORT}" \
   --tag testid="${TEST_ID}" \
   --tag profile="${PROFILE_NAME}" \
+  --tag testtype="${TEST_TYPE}" \
   --tag timestamp="${TIMESTAMP}" 2>&1 | tee "${LOG_FILE}"
 
 # Display completion message
@@ -63,4 +82,5 @@ echo "For Grafana, filter by:"
 echo "  - Test ID: ${TEST_ID}"
 echo "  - Timestamp: ${TIMESTAMP}"
 echo "  - Profile: ${PROFILE_NAME}"
+echo "  - Test type: ${TEST_TYPE}"
 echo "========================================================================"

@@ -15,6 +15,10 @@
   "authz_permissions_per_request": 5,
   "authz_username": "admin",
   "authz_password": "admin",
+  "authz_course_test_scopes": [
+    "course-v1:OpenedX+DemoX+DemoCourse",
+    "course-v1:MIT+6.001+2024_T1"
+  ],
   "sleep_time": 1,
   "run_setup": false,
   "lms_root_url": "https://singapore.edunext.cloud"

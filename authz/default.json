@@ -4,13 +4,17 @@
   "authz_password": "admin",
   "authz_client_id": "login-service-client-id",
   "authz_permissions_per_request": 10,
-  "authz_test_scopes": [
+  "authz_library_test_scopes": [
     "lib:OpenedX:CSPROB",
     "lib:OpenedX:CE",
     "lib:MIT:LIB1",
     "lib:OpenedX:DMS",
     "lib:OpenedX:LANGP",
     "lib:OpenedX:OPTI"
+  ],
+  "authz_course_test_scopes": [
+    "course-v1:OpenedX+DemoX+DemoCourse",
+    "course-v1:MIT+6.001+2024_T1"
   ],
   "run_setup": true,
   "sleep_time": 1,
