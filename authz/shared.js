@@ -223,6 +223,49 @@ export function assignUsersToRoles(lmsRootUrl, adminToken, users, scope, roles) 
   return { assigned: totalAssigned, errors: totalErrors };
 }
 
+export function unassignUsersFromRoles(lmsRootUrl, adminToken, users, scope, roles) {
+  let totalRemoved = 0;
+  let totalErrors = 0;
+
+  for (let i = 0; i < roles.length; i++) {
+    const role = roles[i];
+
+    const usersForRole = users
+      .filter((_, idx) => idx % roles.length === i)
+      .map((u) => u.username);
+
+    if (usersForRole.length === 0) continue;
+
+    const url = `${lmsRootUrl}${AUTHZ_ROLES_USERS_PATH}?role=${encodeURIComponent(role)}&scope=${encodeURIComponent(scope)}&users=${encodeURIComponent(usersForRole.join(","))}`;
+
+    const params = {
+      headers: {
+        Authorization: `JWT ${adminToken}`,
+      },
+    };
+
+    const res = http.del(url, null, params);
+
+    if (res.status === 207 || res.status === 200) {
+      const body = JSON.parse(res.body);
+      const completed = body.completed ? body.completed.length : 0;
+      const errors = body.errors ? body.errors.length : 0;
+      totalRemoved += completed;
+      totalErrors += errors;
+      console.info(`  → Removed ${completed} users from role '${role}' for scope '${scope}'`);
+      if (errors > 0) {
+        console.warn(`    Errors: ${errors}`);
+      }
+    } else {
+      console.error(`  ✗ Failed to remove users from role '${role}': [${res.status}] ${res.body}`);
+    }
+
+    sleep(0.5);
+  }
+
+  return { removed: totalRemoved, errors: totalErrors };
+}
+
 export function generatePermissionChecks(count, actions, scopes) {
   const permissions = [];
   for (let i = 0; i < count; i++) {
@@ -470,6 +513,36 @@ export function runVU(config, data) {
 }
 
 export function runTeardown(config, data) {
+  const runCleanup = __ENV.CLEANUP === "true";
+
+  if (runCleanup && data && data.users && data.users.length > 0) {
+    console.log(`\n${"=".repeat(80)}`);
+    console.log("CLEANUP PHASE: Removing role assignments");
+    console.log("=".repeat(80));
+
+    const adminToken = getAdminToken(config.lmsRootUrl, config.clientId, config.username, config.password);
+
+    if (!adminToken) {
+      console.error("✗ CLEANUP FAILED: Could not obtain admin token.");
+    } else {
+      const assignmentScopes = config.assignmentScopes || config.scopes;
+      let totalRemoved = 0;
+      let totalErrors = 0;
+
+      for (const scope of assignmentScopes) {
+        console.info(`Scope: ${scope}`);
+        const result = unassignUsersFromRoles(config.lmsRootUrl, adminToken, data.users, scope, config.roles);
+        totalRemoved += result.removed;
+        totalErrors += result.errors;
+        sleep(1);
+      }
+
+      console.info(`\nCleanup complete: ${totalRemoved} assignments removed, ${totalErrors} errors`);
+    }
+
+    console.log(`${"=".repeat(80)}\n`);
+  }
+
   const testEndTime = new Date();
 
   console.log(`\n${"=".repeat(80)}`);
