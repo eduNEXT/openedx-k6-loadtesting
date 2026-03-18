@@ -1,10 +1,23 @@
 #!/bin/bash
 
 # Run AuthZ Performance Test with Timestamped Reports
+#
 # Usage: ./run_authz_test.sh [profile_name] [test_type] [scope_mode]
-# Example: ./run_authz_test.sh authz_small libraries
-#          ./run_authz_test.sh authz_small courses glob
-# Default test_type: libraries, scope_mode: direct
+#
+# Arguments:
+#   profile_name  Profile JSON name without extension (default: authz_small)
+#   test_type     "courses" or "libraries" (default: libraries)
+#   scope_mode    "direct" or "glob" (default: direct)
+#
+# Environment variables:
+#   AUTHZ_USERNAME  Username for admin OAuth2 token (default: admin)
+#   AUTHZ_PASSWORD  Password for admin OAuth2 token (default: admin)
+#   AUTHZ_CLIENT_ID OAuth2 client ID (default: login-service-client-id)
+#
+# Examples:
+#   ./run_authz_test.sh authz_small libraries
+#   ./run_authz_test.sh authz_small courses glob
+#   AUTHZ_USERNAME=staff AUTHZ_PASSWORD=secret ./run_authz_test.sh authz_small courses
 
 set -e
 
@@ -57,6 +70,7 @@ echo "Test type:     ${TEST_TYPE}"
 echo "Scope mode:    ${SCOPE_MODE}"
 echo "Test file:     ${TEST_FILE}"
 echo "Profile:       profiles/${PROFILE_NAME}.json"
+echo "Auth user:     ${AUTHZ_USERNAME:-(default: admin)}"
 echo "Timestamp:     ${TIMESTAMP} (UTC+1)"
 echo "Test ID:       ${TEST_ID}"
 echo "JSON Report:   ${JSON_REPORT}"
@@ -65,12 +79,19 @@ echo "Log File:      ${LOG_FILE}"
 echo "========================================================================"
 echo ""
 
+# Build optional env var flags for k6
+ENV_FLAGS=()
+[[ -n "${AUTHZ_USERNAME:-}" ]] && ENV_FLAGS+=(-e "AUTHZ_USERNAME=${AUTHZ_USERNAME}")
+[[ -n "${AUTHZ_PASSWORD:-}" ]] && ENV_FLAGS+=(-e "AUTHZ_PASSWORD=${AUTHZ_PASSWORD}")
+[[ -n "${AUTHZ_CLIENT_ID:-}" ]] && ENV_FLAGS+=(-e "AUTHZ_CLIENT_ID=${AUTHZ_CLIENT_ID}")
+
 # Run k6 test with timestamped reports
 # Capture both stdout and stderr to log file while still displaying to console
 k6 run "${TEST_FILE}" \
   -e PROFILE="$(pwd)/profiles/${PROFILE_NAME}.json" \
   -e SCOPE_MODE="${SCOPE_MODE}" \
   -e SUMMARY_EXPORT="${SUMMARY_REPORT}" \
+  "${ENV_FLAGS[@]}" \
   --out json="${JSON_REPORT}" \
   --tag testid="${TEST_ID}" \
   --tag profile="${PROFILE_NAME}" \
