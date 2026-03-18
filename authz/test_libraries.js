@@ -58,9 +58,9 @@ const CONFIG = {
   lmsRootUrl: PROFILE["lms_root_url"],
   sleepTime: PROFILE["sleep_time"] || 1,
   runSetup: PROFILE["run_setup"] !== undefined ? PROFILE["run_setup"] : true,
-  username: PROFILE["authz_username"] || "admin",
-  password: PROFILE["authz_password"] || "admin",
-  clientId: PROFILE["authz_client_id"] || "login-service-client-id",
+  username: PROFILE["authz_username"] || __ENV.AUTHZ_USERNAME || "admin",
+  password: PROFILE["authz_password"] || __ENV.AUTHZ_PASSWORD || "admin",
+  clientId: PROFILE["authz_client_id"] || __ENV.AUTHZ_CLIENT_ID || "login-service-client-id",
 };
 
 export const options = buildOptions(PROFILE);

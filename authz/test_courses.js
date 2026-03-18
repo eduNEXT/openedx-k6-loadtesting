@@ -48,15 +48,15 @@ const CONFIG = {
   actions: COURSE_ACTIONS,
   scopes: PROFILE["authz_course_test_scopes"] || [
     "course-v1:OpenedX+DemoX+DemoCourse",
-    "course-v1:MIT+6.001+2024_T1",
+    "course-v1:OpenedX+CD+2026_T1",
   ],
   permissionsPerRequest: PROFILE["authz_permissions_per_request"] || 10,
   lmsRootUrl: PROFILE["lms_root_url"],
   sleepTime: PROFILE["sleep_time"] || 1,
   runSetup: PROFILE["run_setup"] !== undefined ? PROFILE["run_setup"] : true,
-  username: PROFILE["authz_username"] || "admin",
-  password: PROFILE["authz_password"] || "admin",
-  clientId: PROFILE["authz_client_id"] || "login-service-client-id",
+  username: PROFILE["authz_username"] || __ENV.AUTHZ_USERNAME || "admin",
+  password: PROFILE["authz_password"] || __ENV.AUTHZ_PASSWORD || "admin",
+  clientId: PROFILE["authz_client_id"] || __ENV.AUTHZ_CLIENT_ID || "login-service-client-id",
 };
 
 export const options = buildOptions(PROFILE);

@@ -11,9 +11,9 @@
   "authz_password": "admin",
   "authz_course_test_scopes": [
     "course-v1:OpenedX+DemoX+DemoCourse",
-    "course-v1:MIT+6.001+2024_T1"
+    "course-v1:OpenedX+CD+2026_T1"
   ],
   "sleep_time": 1,
-  "run_setup": false,
-  "lms_root_url": "https://singapore.edunext.cloud"
+  "run_setup": true,
+  "lms_root_url": "https://muscat.eu1.edunext.cloud"
 }

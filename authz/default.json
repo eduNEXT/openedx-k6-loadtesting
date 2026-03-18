@@ -14,7 +14,7 @@
   ],
   "authz_course_test_scopes": [
     "course-v1:OpenedX+DemoX+DemoCourse",
-    "course-v1:MIT+6.001+2024_T1"
+    "course-v1:OpenedX+CD+2026_T1"
   ],
   "run_setup": true,
   "sleep_time": 1,
