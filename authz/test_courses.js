@@ -5,14 +5,19 @@
   Description: Tests the performance of the AuthZ permission validation endpoint
     for COURSE permissions under high load scenarios.
 
+    Supports two scope modes (via SCOPE_MODE env var or profile field):
+      - "direct" (default): assigns roles to explicit course scopes and validates against them.
+      - "glob": assigns roles using wildcard patterns (e.g., course-v1:OpenedX+*) and
+        validates against specific courses under that pattern.
+
     Usage:
       $ cd authz && k6 run test_courses.js -e PROFILE=profiles/authz_small.json
+      $ cd authz && k6 run test_courses.js -e PROFILE=profiles/authz_small.json -e SCOPE_MODE=glob
       $ cd authz && ./run_authz_test.sh authz_small courses
 */
 
 import {
   getProfile,
-  getUser,
   buildOptions,
   runSetup,
   runVU,
@@ -21,6 +26,7 @@ import {
 } from "./shared.js";
 
 const PROFILE = getProfile();
+const SCOPE_MODE = PROFILE["scope_mode"] || __ENV.SCOPE_MODE || "direct";
 
 const COURSE_ACTIONS = [
   "courses.view_course",
@@ -42,20 +48,30 @@ const COURSE_ACTIONS = [
   "courses.create_course",
 ];
 
+const DIRECT_SCOPES = PROFILE["course_direct_scopes"] || [
+  "course-v1:WGU+CS+2026",
+  "course-v1:edunext+PY+2026",
+  "course-v1:OpenedX+DMS+2026",
+];
+
+const GLOB_ASSIGNMENT_SCOPES = PROFILE["course_glob_patterns"] || [
+  "course-v1:WGU+*",
+  "course-v1:edunext+*",
+  "course-v1:OpenedX+*",
+];
+
 const CONFIG = {
-  label: "course",
+  label: SCOPE_MODE === "glob" ? "course-glob" : "course-direct",
   roles: ["course_admin", "course_staff", "course_editor"],
   actions: COURSE_ACTIONS,
-  scopes: PROFILE["authz_course_test_scopes"] || [
-    "course-v1:OpenedX+DemoX+DemoCourse",
-    "course-v1:OpenedX+CD+2026_T1",
-  ],
-  permissionsPerRequest: PROFILE["authz_permissions_per_request"] || 10,
+  scopes: DIRECT_SCOPES,
+  assignmentScopes: SCOPE_MODE === "glob" ? GLOB_ASSIGNMENT_SCOPES : DIRECT_SCOPES,
+  permissionsPerRequest: PROFILE["permissions_per_request"] || 10,
   lmsRootUrl: PROFILE["lms_root_url"],
   sleepTime: PROFILE["sleep_time"] || 1,
   runSetup: PROFILE["run_setup"] !== undefined ? PROFILE["run_setup"] : true,
-  username: PROFILE["authz_username"] || __ENV.AUTHZ_USERNAME || "admin",
-  password: PROFILE["authz_password"] || __ENV.AUTHZ_PASSWORD || "admin",
+  username: __ENV.AUTHZ_USERNAME || "admin",
+  password: __ENV.AUTHZ_PASSWORD || "admin",
   clientId: PROFILE["authz_client_id"] || __ENV.AUTHZ_CLIENT_ID || "login-service-client-id",
 };
 

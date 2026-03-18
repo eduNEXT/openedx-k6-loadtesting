@@ -396,12 +396,12 @@ export function runSetup(config) {
 
   console.info("✓ Admin token obtained\n");
 
-  console.info(`Assigning users to ${config.label} roles across ${config.scopes.length} scopes...\n`);
+  const assignmentScopes = config.assignmentScopes || config.scopes;
+  console.info(`Assigning users to ${config.label} roles across ${assignmentScopes.length} assignment scopes...\n`);
 
   let totalAssignments = 0;
   let totalErrors = 0;
-
-  for (const scope of config.scopes) {
+  for (const scope of assignmentScopes) {
     console.info(`Scope: ${scope}`);
     const result = assignUsersToRoles(config.lmsRootUrl, adminToken, users, scope, config.roles);
     totalAssignments += result.assigned;
@@ -421,7 +421,8 @@ export function runSetup(config) {
   console.info(`Total role assignments: ${totalAssignments}`);
   console.info(`Total assignment errors: ${totalErrors}`);
   console.log(`Roles used: ${config.roles.join(", ")}`);
-  console.log(`Scopes configured: ${config.scopes.length}`);
+  console.log(`Assignment scopes: ${assignmentScopes.join(", ")}`);
+  console.log(`Validation scopes: ${config.scopes.join(", ")}`);
   console.log(`${"=".repeat(80)}\n`);
 
   return { users: users, testStartTime: testStartTime.toISOString() };
@@ -476,7 +477,8 @@ export function runTeardown(config, data) {
   console.log("=".repeat(80));
   console.log(`Test completed for ${config.label} permission validation`);
   console.log(`Permissions validated per request: ${config.permissionsPerRequest}`);
-  console.log(`Scopes tested: ${config.scopes.length}`);
+  console.log(`Assignment scopes: ${(config.assignmentScopes || config.scopes).join(", ")}`);
+  console.log(`Validation scopes: ${config.scopes.join(", ")}`);
 
   if (data && data.users) {
     console.log(`\nUser & Role Configuration:`);
@@ -531,7 +533,8 @@ export function buildHandleSummary(config) {
         testStartTime: setupData.testStartTime,
         testEndTime: testEndTime.toISOString(),
         permissionsPerRequest: config.permissionsPerRequest,
-        scopesTested: config.scopes.length,
+        assignmentScopes: config.assignmentScopes || config.scopes,
+        validationScopes: config.scopes,
         totalUsers: setupData.users?.length || 0,
         roles: config.roles,
       },
@@ -540,7 +543,8 @@ export function buildHandleSummary(config) {
         sleep_time: config.sleepTime,
         permissions_per_request: config.permissionsPerRequest,
         run_setup: config.runSetup,
-        test_scopes: config.scopes,
+        assignment_scopes: config.assignmentScopes || config.scopes,
+        validation_scopes: config.scopes,
         client_id: config.clientId,
       },
     };

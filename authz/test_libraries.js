@@ -5,14 +5,19 @@
   Description: Tests the performance of the AuthZ permission validation endpoint
     for LIBRARY permissions under high load scenarios.
 
+    Supports two scope modes (via SCOPE_MODE env var or profile field):
+      - "direct" (default): assigns roles to explicit library scopes and validates against them.
+      - "glob": assigns roles using wildcard patterns (e.g., lib:OpenedX:*) and
+        validates against specific libraries under that pattern.
+
     Usage:
       $ cd authz && k6 run test_libraries.js -e PROFILE=profiles/authz_small.json
+      $ cd authz && k6 run test_libraries.js -e PROFILE=profiles/authz_small.json -e SCOPE_MODE=glob
       $ cd authz && ./run_authz_test.sh authz_small libraries
 */
 
 import {
   getProfile,
-  getUser,
   buildOptions,
   runSetup,
   runVU,
@@ -21,6 +26,7 @@ import {
 } from "./shared.js";
 
 const PROFILE = getProfile();
+const SCOPE_MODE = PROFILE["scope_mode"] || __ENV.SCOPE_MODE || "direct";
 
 const LIBRARY_ACTIONS = [
   "content_libraries.view_library",
@@ -42,24 +48,30 @@ const LIBRARY_ACTIONS = [
   "content_libraries.view_library_collection",
 ];
 
+const DIRECT_SCOPES = PROFILE["library_direct_scopes"] || [
+  "lib:WGU:CSPROB",
+  "lib:edunext:Python",
+  "lib:OpenedX:DMS",
+];
+
+const GLOB_ASSIGNMENT_SCOPES = PROFILE["library_glob_patterns"] || [
+  "lib:WGU:*",
+  "lib:edunext:*",
+  "lib:OpenedX:*",
+];
+
 const CONFIG = {
-  label: "library",
+  label: SCOPE_MODE === "glob" ? "library-glob" : "library-direct",
   roles: ["library_admin", "library_author", "library_user"],
   actions: LIBRARY_ACTIONS,
-  scopes: PROFILE["authz_library_test_scopes"] || [
-    "lib:OpenedX:CSPROB",
-    "lib:OpenedX:CE",
-    "lib:MIT:LIB1",
-    "lib:OpenedX:DMS",
-    "lib:OpenedX:LANGP",
-    "lib:OpenedX:OPTI",
-  ],
-  permissionsPerRequest: PROFILE["authz_permissions_per_request"] || 10,
+  scopes: DIRECT_SCOPES,
+  assignmentScopes: SCOPE_MODE === "glob" ? GLOB_ASSIGNMENT_SCOPES : DIRECT_SCOPES,
+  permissionsPerRequest: PROFILE["permissions_per_request"] || 10,
   lmsRootUrl: PROFILE["lms_root_url"],
   sleepTime: PROFILE["sleep_time"] || 1,
   runSetup: PROFILE["run_setup"] !== undefined ? PROFILE["run_setup"] : true,
-  username: PROFILE["authz_username"] || __ENV.AUTHZ_USERNAME || "admin",
-  password: PROFILE["authz_password"] || __ENV.AUTHZ_PASSWORD || "admin",
+  username: __ENV.AUTHZ_USERNAME || "admin",
+  password: __ENV.AUTHZ_PASSWORD || "admin",
   clientId: PROFILE["authz_client_id"] || __ENV.AUTHZ_CLIENT_ID || "login-service-client-id",
 };
 

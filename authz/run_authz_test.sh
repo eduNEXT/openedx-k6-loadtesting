@@ -1,22 +1,29 @@
 #!/bin/bash
 
 # Run AuthZ Performance Test with Timestamped Reports
-# Usage: ./run_authz_test.sh [profile_name] [test_type]
+# Usage: ./run_authz_test.sh [profile_name] [test_type] [scope_mode]
 # Example: ./run_authz_test.sh authz_small libraries
-#          ./run_authz_test.sh authz_small courses
-# Default test_type: libraries
+#          ./run_authz_test.sh authz_small courses glob
+# Default test_type: libraries, scope_mode: direct
 
 set -e
 
 # Configuration
 PROFILE="${1:-authz_small}"
 TEST_TYPE="${2:-libraries}"
+SCOPE_MODE="${3:-direct}"
 REPORTS_DIR="reports"
 TIMEZONE="Europe/Paris"  # UTC+1 (adjust if needed)
 
 # Validate test type
 if [[ "$TEST_TYPE" != "libraries" && "$TEST_TYPE" != "courses" ]]; then
   echo "Error: Invalid test type '${TEST_TYPE}'. Must be 'libraries' or 'courses'."
+  exit 1
+fi
+
+# Validate scope mode
+if [[ "$SCOPE_MODE" != "direct" && "$SCOPE_MODE" != "glob" ]]; then
+  echo "Error: Invalid scope mode '${SCOPE_MODE}'. Must be 'direct' or 'glob'."
   exit 1
 fi
 
@@ -38,15 +45,16 @@ TEST_ID=$(date +%s)
 PROFILE_NAME=$(basename "$PROFILE" .json)
 
 # Report file paths
-JSON_REPORT="${REPORTS_DIR}/authz-${TEST_TYPE}-${PROFILE_NAME}-${TIMESTAMP}-cet.json"
-SUMMARY_REPORT="${REPORTS_DIR}/authz-${TEST_TYPE}-${PROFILE_NAME}-${TIMESTAMP}-summary.json"
-LOG_FILE="${REPORTS_DIR}/authz-${TEST_TYPE}-${PROFILE_NAME}-${TIMESTAMP}.log"
+JSON_REPORT="${REPORTS_DIR}/authz-${TEST_TYPE}-${SCOPE_MODE}-${PROFILE_NAME}-${TIMESTAMP}-cet.json"
+SUMMARY_REPORT="${REPORTS_DIR}/authz-${TEST_TYPE}-${SCOPE_MODE}-${PROFILE_NAME}-${TIMESTAMP}-summary.json"
+LOG_FILE="${REPORTS_DIR}/authz-${TEST_TYPE}-${SCOPE_MODE}-${PROFILE_NAME}-${TIMESTAMP}.log"
 
 # Display test information
 echo "========================================================================"
 echo "AuthZ Performance Test"
 echo "========================================================================"
 echo "Test type:     ${TEST_TYPE}"
+echo "Scope mode:    ${SCOPE_MODE}"
 echo "Test file:     ${TEST_FILE}"
 echo "Profile:       profiles/${PROFILE_NAME}.json"
 echo "Timestamp:     ${TIMESTAMP} (UTC+1)"
@@ -61,11 +69,13 @@ echo ""
 # Capture both stdout and stderr to log file while still displaying to console
 k6 run "${TEST_FILE}" \
   -e PROFILE="$(pwd)/profiles/${PROFILE_NAME}.json" \
+  -e SCOPE_MODE="${SCOPE_MODE}" \
   -e SUMMARY_EXPORT="${SUMMARY_REPORT}" \
   --out json="${JSON_REPORT}" \
   --tag testid="${TEST_ID}" \
   --tag profile="${PROFILE_NAME}" \
   --tag testtype="${TEST_TYPE}" \
+  --tag scopemode="${SCOPE_MODE}" \
   --tag timestamp="${TIMESTAMP}" 2>&1 | tee "${LOG_FILE}"
 
 # Display completion message

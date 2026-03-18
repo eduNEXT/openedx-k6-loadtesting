@@ -8,12 +8,26 @@
     { "target": 30, "duration": "3m" },
     { "target": 0, "duration": "1m" }
   ],
-  "authz_permissions_per_request": 15,
-  "authz_username": "admin",
-  "authz_password": "admin",
-  "authz_course_test_scopes": [
-    "course-v1:OpenedX+DemoX+DemoCourse",
-    "course-v1:OpenedX+CD+2026_T1"
+  "permissions_per_request": 15,
+  "course_direct_scopes": [
+    "course-v1:WGU+CS+2026",
+    "course-v1:edunext+PY+2026",
+    "course-v1:OpenedX+DMS+2026"
+  ],
+  "course_glob_patterns": [
+    "course-v1:WGU+*",
+    "course-v1:edunext+*",
+    "course-v1:OpenedX+*"
+  ],
+  "library_direct_scopes": [
+    "lib:WGU:CSPROB",
+    "lib:edunext:Python",
+    "lib:OpenedX:DMS"
+  ],
+  "library_glob_patterns": [
+    "lib:WGU:*",
+    "lib:edunext:*",
+    "lib:OpenedX:*"
   ],
   "sleep_time": 1,
   "run_setup": true,
