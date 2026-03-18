@@ -598,6 +598,26 @@ export function buildHandleSummary(config) {
       grafanaUrl = `https://vitals.singapore.edunext.cloud/grafana/d/openedxperformance/open-edx-performance?from=${grafanaStart.toISOString()}&to=${grafanaEnd.toISOString()}&var-resolution=3m&refresh=5m`;
     }
 
+    const thresholdResults = {};
+    if (data.metrics) {
+      const thresholdMetrics = [
+        "http_req_failed",
+        "http_req_duration",
+        "permission_validation_duration",
+        "permission_validation_errors",
+      ];
+
+      for (const name of thresholdMetrics) {
+        const metric = data.metrics[name];
+        if (metric) {
+          thresholdResults[name] = {
+            values: metric.values,
+            thresholds: metric.thresholds,
+          };
+        }
+      }
+    }
+
     const customSummary = {
       ...data,
       grafanaUrl: grafanaUrl,
@@ -620,10 +640,39 @@ export function buildHandleSummary(config) {
         validation_scopes: config.scopes,
         client_id: config.clientId,
       },
+      thresholdResults: thresholdResults,
     };
 
+    let thresholdSummary = `\n${"=".repeat(80)}\n`;
+    thresholdSummary += `THRESHOLD RESULTS: ${config.label.toUpperCase()}\n`;
+    thresholdSummary += `${"=".repeat(80)}\n`;
+
+    for (const [name, info] of Object.entries(thresholdResults)) {
+      const vals = info.values || {};
+      const thresholds = info.thresholds || {};
+      const thresholdEntries = Object.entries(thresholds);
+
+      for (const [criterion, result] of thresholdEntries) {
+        const status = result.ok ? "PASS" : "FAIL";
+        const marker = result.ok ? "✓" : "✗";
+
+        let actual = "";
+        if (name.includes("duration")) {
+          actual = `  (p95=${Math.round(vals["p(95)"])}ms, p99=${Math.round(vals["p(99)"])}ms, avg=${Math.round(vals.avg)}ms)`;
+        } else if (name.includes("failed")) {
+          actual = `  (rate=${(vals.rate * 100).toFixed(2)}%)`;
+        } else if (name.includes("errors")) {
+          actual = `  (count=${vals.count})`;
+        }
+
+        thresholdSummary += `  ${marker} [${status}] ${name}: ${criterion}${actual}\n`;
+      }
+    }
+
+    thresholdSummary += `${"=".repeat(80)}\n`;
+
     const output = {
-      stdout: textSummary(data, { indent: " ", enableColors: true }),
+      stdout: textSummary(data, { indent: " ", enableColors: true }) + thresholdSummary,
     };
 
     const summaryPath = __ENV.SUMMARY_EXPORT;
