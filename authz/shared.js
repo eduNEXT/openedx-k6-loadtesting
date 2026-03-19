@@ -207,7 +207,9 @@ export function assignUsersToRoles(lmsRootUrl, adminToken, users, scope, roles) 
       totalErrors += errors;
       console.info(`  → Assigned ${completed} users to role '${role}' for scope '${scope}'`);
       if (errors > 0) {
-        console.warn(`    Errors: ${errors}`);
+        for (const err of body.errors) {
+          console.warn(`    ✗ ${err.user_identifier}: ${err.error || err.status || JSON.stringify(err)}`);
+        }
       }
     } else {
       console.error(`  ✗ Failed to assign users to role '${role}': [${res.status}] ${res.body}`);
@@ -254,7 +256,9 @@ export function unassignUsersFromRoles(lmsRootUrl, adminToken, users, scope, rol
       totalErrors += errors;
       console.info(`  → Removed ${completed} users from role '${role}' for scope '${scope}'`);
       if (errors > 0) {
-        console.warn(`    Errors: ${errors}`);
+        for (const err of body.errors) {
+          console.warn(`    ✗ ${err.user_identifier}: ${err.error || err.status || JSON.stringify(err)}`);
+        }
       }
     } else {
       console.error(`  ✗ Failed to remove users from role '${role}': [${res.status}] ${res.body}`);
