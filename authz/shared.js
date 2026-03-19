@@ -457,6 +457,35 @@ export function runSetup(config) {
     }
 
     console.info(`\n✓ Pre-test cleanup: ${cleanupRemoved} assignments removed, ${cleanupErrors} errors\n`);
+
+    const sampleUser = users[0];
+    console.info(`Verifying clean state for sample user '${sampleUser.username}'...`);
+
+    let isClean = true;
+    for (const scope of config.cleanupScopes) {
+      const url = `${config.lmsRootUrl}${AUTHZ_ROLES_USERS_PATH}?scope=${encodeURIComponent(scope)}&search=${encodeURIComponent(sampleUser.username)}`;
+      const res = http.get(url, {
+        headers: { Authorization: `JWT ${adminToken}` },
+      });
+
+      if (res.status === 200) {
+        const body = JSON.parse(res.body);
+        const results = body.results || [];
+        const match = results.find((u) => u.username === sampleUser.username);
+        if (match && match.roles && match.roles.length > 0) {
+          isClean = false;
+          console.warn(`  ⚠ '${sampleUser.username}' still has roles in scope '${scope}': ${match.roles.join(", ")}`);
+        }
+      } else {
+        console.warn(`  ⚠ Could not verify scope '${scope}': [${res.status}] ${res.body}`);
+      }
+    }
+
+    if (isClean) {
+      console.info(`✓ Verified: '${sampleUser.username}' has no roles across all scopes (clean state)\n`);
+    } else {
+      console.warn(`⚠ Sample user still has roles after cleanup — test results may be affected\n`);
+    }
   }
 
   const assignmentScopes = config.assignmentScopes || config.scopes;
