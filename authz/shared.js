@@ -225,9 +225,11 @@ export function assignUsersToRoles(lmsRootUrl, adminToken, users, scope, roles) 
   return { assigned: totalAssigned, errors: totalErrors };
 }
 
-export function unassignUsersFromRoles(lmsRootUrl, adminToken, users, scope, roles) {
+export function unassignUsersFromRoles(lmsRootUrl, adminToken, users, scope, roles, options = {}) {
+  const verbose = options.verbose !== false;
   let totalRemoved = 0;
-  let totalErrors = 0;
+  let totalSkipped = 0;
+  let totalFailed = 0;
 
   for (let i = 0; i < roles.length; i++) {
     const role = roles[i];
@@ -251,23 +253,33 @@ export function unassignUsersFromRoles(lmsRootUrl, adminToken, users, scope, rol
     if (res.status === 207 || res.status === 200) {
       const body = JSON.parse(res.body);
       const completed = body.completed ? body.completed.length : 0;
-      const errors = body.errors ? body.errors.length : 0;
       totalRemoved += completed;
-      totalErrors += errors;
-      console.info(`  → Removed ${completed} users from role '${role}' for scope '${scope}'`);
-      if (errors > 0) {
+
+      if (body.errors) {
         for (const err of body.errors) {
-          console.warn(`    ✗ ${err.user_identifier}: ${err.error || err.status || JSON.stringify(err)}`);
+          if (err.error === "user_does_not_have_role") {
+            totalSkipped++;
+          } else {
+            totalFailed++;
+            if (verbose) {
+              console.warn(`    ✗ ${err.user_identifier}: ${err.error || err.status || JSON.stringify(err)}`);
+            }
+          }
         }
       }
+
+      if (verbose) {
+        console.info(`  → Removed ${completed} users from role '${role}' for scope '${scope}'`);
+      }
     } else {
+      totalFailed++;
       console.error(`  ✗ Failed to remove users from role '${role}': [${res.status}] ${res.body}`);
     }
 
     sleep(0.5);
   }
 
-  return { removed: totalRemoved, errors: totalErrors };
+  return { removed: totalRemoved, skipped: totalSkipped, failed: totalFailed };
 }
 
 export function generatePermissionChecks(count, actions, scopes) {
@@ -447,16 +459,23 @@ export function runSetup(config) {
     console.info("Cleaning up existing role assignments before test...\n");
 
     let cleanupRemoved = 0;
-    let cleanupErrors = 0;
+    let cleanupSkipped = 0;
+    let cleanupFailed = 0;
     for (const scope of config.cleanupScopes) {
-      console.info(`  Cleanup scope: ${scope}`);
-      const result = unassignUsersFromRoles(config.lmsRootUrl, adminToken, users, scope, config.roles);
+      const result = unassignUsersFromRoles(config.lmsRootUrl, adminToken, users, scope, config.roles, { verbose: false });
       cleanupRemoved += result.removed;
-      cleanupErrors += result.errors;
+      cleanupSkipped += result.skipped;
+      cleanupFailed += result.failed;
+
+      if (result.removed > 0) {
+        console.info(`  ✓ ${scope}: removed ${result.removed} role assignments`);
+      } else {
+        console.info(`  - ${scope}: no roles to remove`);
+      }
       sleep(0.5);
     }
 
-    console.info(`\n✓ Pre-test cleanup: ${cleanupRemoved} assignments removed, ${cleanupErrors} errors\n`);
+    console.info(`\n✓ Pre-test cleanup: ${cleanupRemoved} removed, ${cleanupSkipped} already clean, ${cleanupFailed} failed\n`);
 
     const sampleUser = users[0];
     console.info(`Verifying clean state for sample user '${sampleUser.username}'...`);
