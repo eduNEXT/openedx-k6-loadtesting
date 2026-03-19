@@ -88,6 +88,7 @@ ENV_FLAGS=()
 # Run k6 test with timestamped reports
 # Capture both stdout and stderr to log file while still displaying to console
 k6 run "${TEST_FILE}" \
+  --quiet \
   -e PROFILE="$(pwd)/profiles/${PROFILE_NAME}.json" \
   -e SCOPE_MODE="${SCOPE_MODE}" \
   -e SUMMARY_EXPORT="${SUMMARY_REPORT}" \
