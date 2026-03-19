@@ -13,13 +13,11 @@
 #   AUTHZ_USERNAME  Username for admin OAuth2 token (default: admin)
 #   AUTHZ_PASSWORD  Password for admin OAuth2 token (default: admin)
 #   AUTHZ_CLIENT_ID OAuth2 client ID (default: login-service-client-id)
-#   CLEANUP         Set to "true" to remove role assignments after the test
 #
 # Examples:
 #   ./run_authz_test.sh authz_small libraries
 #   ./run_authz_test.sh authz_small courses glob
 #   AUTHZ_USERNAME=staff AUTHZ_PASSWORD=secret ./run_authz_test.sh authz_small courses
-#   CLEANUP=true ./run_authz_test.sh authz_small courses direct
 
 set -e
 
@@ -73,7 +71,6 @@ echo "Scope mode:    ${SCOPE_MODE}"
 echo "Test file:     ${TEST_FILE}"
 echo "Profile:       profiles/${PROFILE_NAME}.json"
 echo "Auth user:     ${AUTHZ_USERNAME:-(default: admin)}"
-echo "Cleanup:       ${CLEANUP:-false}"
 echo "Timestamp:     ${TIMESTAMP} (UTC+1)"
 echo "Test ID:       ${TEST_ID}"
 echo "JSON Report:   ${JSON_REPORT}"
@@ -87,7 +84,6 @@ ENV_FLAGS=()
 [[ -n "${AUTHZ_USERNAME:-}" ]] && ENV_FLAGS+=(-e "AUTHZ_USERNAME=${AUTHZ_USERNAME}")
 [[ -n "${AUTHZ_PASSWORD:-}" ]] && ENV_FLAGS+=(-e "AUTHZ_PASSWORD=${AUTHZ_PASSWORD}")
 [[ -n "${AUTHZ_CLIENT_ID:-}" ]] && ENV_FLAGS+=(-e "AUTHZ_CLIENT_ID=${AUTHZ_CLIENT_ID}")
-[[ "${CLEANUP:-}" == "true" ]] && ENV_FLAGS+=(-e "CLEANUP=true")
 
 # Run k6 test with timestamped reports
 # Capture both stdout and stderr to log file while still displaying to console

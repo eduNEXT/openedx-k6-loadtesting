@@ -529,36 +529,6 @@ export function runVU(config, data) {
 }
 
 export function runTeardown(config, data) {
-  const runCleanup = __ENV.CLEANUP === "true";
-
-  if (runCleanup && data && data.users && data.users.length > 0) {
-    console.log(`\n${"=".repeat(80)}`);
-    console.log("CLEANUP PHASE: Removing role assignments");
-    console.log("=".repeat(80));
-
-    const adminToken = getAdminToken(config.lmsRootUrl, config.clientId, config.username, config.password);
-
-    if (!adminToken) {
-      console.error("✗ CLEANUP FAILED: Could not obtain admin token.");
-    } else {
-      const assignmentScopes = config.assignmentScopes || config.scopes;
-      let totalRemoved = 0;
-      let totalErrors = 0;
-
-      for (const scope of assignmentScopes) {
-        console.info(`Scope: ${scope}`);
-        const result = unassignUsersFromRoles(config.lmsRootUrl, adminToken, data.users, scope, config.roles);
-        totalRemoved += result.removed;
-        totalErrors += result.errors;
-        sleep(1);
-      }
-
-      console.info(`\nCleanup complete: ${totalRemoved} assignments removed, ${totalErrors} errors`);
-    }
-
-    console.log(`${"=".repeat(80)}\n`);
-  }
-
   const testEndTime = new Date();
 
   console.log(`\n${"=".repeat(80)}`);
