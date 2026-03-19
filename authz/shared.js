@@ -439,6 +439,22 @@ export function runSetup(config) {
 
   console.info("✓ Admin token obtained\n");
 
+  if (config.cleanupScopes && config.cleanupScopes.length > 0) {
+    console.info("Cleaning up existing role assignments before test...\n");
+
+    let cleanupRemoved = 0;
+    let cleanupErrors = 0;
+    for (const scope of config.cleanupScopes) {
+      console.info(`  Cleanup scope: ${scope}`);
+      const result = unassignUsersFromRoles(config.lmsRootUrl, adminToken, users, scope, config.roles);
+      cleanupRemoved += result.removed;
+      cleanupErrors += result.errors;
+      sleep(0.5);
+    }
+
+    console.info(`\n✓ Pre-test cleanup: ${cleanupRemoved} assignments removed, ${cleanupErrors} errors\n`);
+  }
+
   const assignmentScopes = config.assignmentScopes || config.scopes;
   console.info(`Assigning users to ${config.label} roles across ${assignmentScopes.length} assignment scopes...\n`);
 

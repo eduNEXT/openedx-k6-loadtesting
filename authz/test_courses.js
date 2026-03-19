@@ -66,6 +66,7 @@ const CONFIG = {
   actions: COURSE_ACTIONS,
   scopes: DIRECT_SCOPES,
   assignmentScopes: SCOPE_MODE === "glob" ? GLOB_ASSIGNMENT_SCOPES : DIRECT_SCOPES,
+  cleanupScopes: [...DIRECT_SCOPES, ...GLOB_ASSIGNMENT_SCOPES],
   permissionsPerRequest: PROFILE["permissions_per_request"] || 10,
   lmsRootUrl: PROFILE["lms_root_url"],
   sleepTime: PROFILE["sleep_time"] || 1,
