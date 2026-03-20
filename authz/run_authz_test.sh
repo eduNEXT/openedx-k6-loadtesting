@@ -58,9 +58,9 @@ TEST_ID=$(date +%s)
 PROFILE_NAME=$(basename "$PROFILE" .json)
 
 # Report file paths
-JSON_REPORT="${REPORTS_DIR}/authz-${TEST_TYPE}-${SCOPE_MODE}-${PROFILE_NAME}-${TIMESTAMP}-cet.json"
 SUMMARY_REPORT="${REPORTS_DIR}/authz-${TEST_TYPE}-${SCOPE_MODE}-${PROFILE_NAME}-${TIMESTAMP}-summary.json"
 LOG_FILE="${REPORTS_DIR}/authz-${TEST_TYPE}-${SCOPE_MODE}-${PROFILE_NAME}-${TIMESTAMP}.log"
+ZIP_FILE="${REPORTS_DIR}/authz-${TEST_TYPE}-${SCOPE_MODE}-${PROFILE_NAME}-${TIMESTAMP}.zip"
 
 # Display test information
 echo "========================================================================"
@@ -73,9 +73,9 @@ echo "Profile:       profiles/${PROFILE_NAME}.json"
 echo "Auth user:     ${AUTHZ_USERNAME:-(default: admin)}"
 echo "Timestamp:     ${TIMESTAMP} (UTC+1)"
 echo "Test ID:       ${TEST_ID}"
-echo "JSON Report:   ${JSON_REPORT}"
 echo "Summary:       ${SUMMARY_REPORT}"
 echo "Log File:      ${LOG_FILE}"
+echo "Zip:           ${ZIP_FILE}"
 echo "========================================================================"
 echo ""
 
@@ -93,22 +93,23 @@ k6 run "${TEST_FILE}" \
   -e SCOPE_MODE="${SCOPE_MODE}" \
   -e SUMMARY_EXPORT="${SUMMARY_REPORT}" \
   "${ENV_FLAGS[@]}" \
-  --out json="${JSON_REPORT}" \
   --tag testid="${TEST_ID}" \
   --tag profile="${PROFILE_NAME}" \
   --tag testtype="${TEST_TYPE}" \
   --tag scopemode="${SCOPE_MODE}" \
   --tag timestamp="${TIMESTAMP}" 2>&1 | tee "${LOG_FILE}"
 
+# Zip reports
+zip -j "${ZIP_FILE}" "${SUMMARY_REPORT}" "${LOG_FILE}"
+rm -f "${SUMMARY_REPORT}" "${LOG_FILE}"
+
 # Display completion message
 echo ""
 echo "========================================================================"
 echo "Test completed successfully!"
 echo "========================================================================"
-echo "Reports saved:"
-echo "  - ${JSON_REPORT}"
-echo "  - ${SUMMARY_REPORT}"
-echo "  - ${LOG_FILE}"
+echo "Report saved:"
+echo "  - ${ZIP_FILE}"
 echo ""
 echo "For Grafana, filter by:"
 echo "  - Test ID: ${TEST_ID}"
